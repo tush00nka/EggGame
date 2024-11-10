@@ -65,7 +65,7 @@ fn spawn_platforms_over_time(
     if spawner.spawn_timer.just_finished() {
         let mut rng = rand::thread_rng();
 
-        let range: Vec<i32> = (-350..350).filter(|x| *x < (&last_x - 50) || *x > (&last_x + 50)).collect();
+        let range: Vec<i32> = (-300..300).filter(|x| *x < (&last_x - 50) || *x > (&last_x + 50)).collect();
         let random_x = range[rng.gen_range(0..range.len())];
 
         spawner.last_spawned_x = random_x;

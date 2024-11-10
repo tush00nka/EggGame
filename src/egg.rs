@@ -72,7 +72,7 @@ fn jump(
     }
 
     if mouse.just_released(MouseButton::Left) {
-        let difference = cursor_position.current - cursor_position.start;
+        let difference = cursor_position.start - cursor_position.current;
 
         impulse.apply_impulse(difference * 2_000.).with_persistence(false);
     }
@@ -94,7 +94,7 @@ fn draw_path(
     let Ok(egg_entity) = q_egg.get_single() else { return };
 
     if mouse.just_pressed(MouseButton::Left) {
-        for i in 0..10 {
+        for i in 1..=10 {
             commands.entity(egg_entity).with_children(|parent| {
                 parent.spawn((
                     SpriteBundle {
@@ -110,7 +110,7 @@ fn draw_path(
 
     if mouse.pressed(MouseButton::Left) {
         for (mut point_transform, path_point, _) in q_path_point.iter_mut() {
-            point_transform.translation = ((cursor_position.current - cursor_position.start) * (path_point.0 as f32/10.0)).extend(0.0);
+            point_transform.translation = ((cursor_position.start - cursor_position.current) * (path_point.0 as f32/10.0)).extend(0.0);
         } 
     }
 
