@@ -3,7 +3,7 @@ Just a little game I've been working on for 3 hours randomly at night
 
 ## Features
 - Egg))
-- Make egg jump by pressing LMB, pulling, and releasing
+- Make Egg)) jump by pressing LMB, pulling, and releasing
 - Platforms spawn infinitely
 
 ## Planned
