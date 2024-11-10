@@ -10,7 +10,7 @@ impl Plugin for PlatformPlugin {
         app
             .init_resource::<PlatformSpawner>()
             .add_systems(Startup, spawn_first_platform)
-            .add_systems(Update, spawn_platforms_over_time)
+            .add_systems(Update, (spawn_platforms_over_time, despawn_platforms))
             .add_systems(FixedUpdate, move_platforms);
     }
 }
@@ -90,5 +90,16 @@ fn move_platforms(
 ) { 
     for mut linvel in q_platform.iter_mut() {
         linvel.0 = Vec2::NEG_Y * PLATFORM_SPEED * time.delta_seconds();
+    }
+}
+
+fn despawn_platforms(
+    mut commands: Commands,
+    q_platform: Query<(Entity, &Transform), With<Platform>>,
+) {
+    for (platform_entity, platform_transform) in q_platform.iter() {
+        if platform_transform.translation.y <= -325.0 {
+            commands.entity(platform_entity).despawn();
+        }
     }
 }

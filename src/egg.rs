@@ -22,7 +22,7 @@ fn spawn_egg(
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("textures/egg.png"),
-            transform: Transform::from_xyz(0.0, 300.,0.),
+            transform: Transform::from_xyz(0.0, 305.,0.),
             ..default()
         },
         Egg,
