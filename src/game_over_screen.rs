@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::GameState;
+use crate::{score::Score, GameState};
 
 pub struct GameOverScreenPlugin;
 
@@ -16,6 +16,7 @@ impl Plugin for GameOverScreenPlugin {
 fn spawn_screen(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
+    mut score: ResMut<Score>,
 ) {
     commands.spawn(NodeBundle {
         style: Style {
@@ -31,7 +32,7 @@ fn spawn_screen(
     })
     .with_children(|parent| {
         parent.spawn(TextBundle::from_section(
-            "Game Over))\nPress LMB to try again))",
+            format!("Game Over))\nBest score: {}\nPress LMB to try again))", score.get_best()),
             TextStyle { 
                 font: asset_server.load("fonts/cartoon.ttf"),
                 font_size: 48.,

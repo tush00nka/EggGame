@@ -13,6 +13,9 @@ use egg::EggPlugin;
 mod game_over_screen;
 use game_over_screen::GameOverScreenPlugin;
 
+mod score;
+use score::ScorePlugin;
+
 #[derive(States, Debug, Hash, Eq, PartialEq, Clone, Copy, Default)]
 pub enum GameState {
     Menu,
@@ -47,6 +50,7 @@ fn main() {
             PlatformPlugin,
             EggPlugin,
             GameOverScreenPlugin,
+            ScorePlugin
         ))
 
         .run();

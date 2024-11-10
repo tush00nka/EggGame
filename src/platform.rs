@@ -3,7 +3,7 @@ use avian2d::prelude::*;
 
 use rand::Rng;
 
-use crate::GameState;
+use crate::{score::Score, GameState};
 
 pub struct PlatformPlugin;
 
@@ -103,10 +103,12 @@ fn move_platforms(
 fn despawn_platforms(
     mut commands: Commands,
     q_platform: Query<(Entity, &Transform), With<Platform>>,
+    mut score: ResMut<Score>,
 ) {
     for (platform_entity, platform_transform) in q_platform.iter() {
         if platform_transform.translation.y <= -325.0 {
             commands.entity(platform_entity).despawn();
+            score.add();
         }
     }
 }
