@@ -42,7 +42,7 @@ fn spawn_first_platform(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
-    commands.init_resource::<PlatformSpawner>();
+    commands.insert_resource(PlatformSpawner::default());
 
     commands.spawn((
         SpriteBundle {
@@ -52,7 +52,7 @@ fn spawn_first_platform(
         },
         Platform,
         RigidBody::Kinematic,
-        Collider::rectangle(190., 24.),
+        Collider::rectangle(190., 20.),
         GravityScale(0.0),
         StateScoped(GameState::Playing)
     ));
@@ -84,7 +84,7 @@ fn spawn_platforms_over_time(
             },
             Platform,
             RigidBody::Kinematic,
-            Collider::rectangle(190., 22.),
+            Collider::rectangle(190., 20.),
             GravityScale(0.0),
             StateScoped(GameState::Playing),
         ));
