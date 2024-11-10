@@ -3,15 +3,18 @@ use avian2d::prelude::*;
 
 use rand::Rng;
 
+use crate::GameState;
+
 pub struct PlatformPlugin;
 
 impl Plugin for PlatformPlugin {
     fn build(&self, app: &mut App) {
         app
-            .init_resource::<PlatformSpawner>()
-            .add_systems(Startup, spawn_first_platform)
-            .add_systems(Update, (spawn_platforms_over_time, despawn_platforms))
-            .add_systems(FixedUpdate, move_platforms);
+            .add_systems(OnEnter(GameState::Playing), spawn_first_platform)
+            .add_systems(Update, (spawn_platforms_over_time, despawn_platforms)
+                .run_if(in_state(GameState::Playing)))
+            .add_systems(FixedUpdate, move_platforms
+                .run_if(in_state(GameState::Playing)));
     }
 }
 
@@ -39,6 +42,8 @@ fn spawn_first_platform(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
+    commands.init_resource::<PlatformSpawner>();
+
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("textures/platform.png"),
@@ -49,6 +54,7 @@ fn spawn_first_platform(
         RigidBody::Kinematic,
         Collider::rectangle(190., 24.),
         GravityScale(0.0),
+        StateScoped(GameState::Playing)
     ));
 }
 
@@ -78,8 +84,9 @@ fn spawn_platforms_over_time(
             },
             Platform,
             RigidBody::Kinematic,
-            Collider::rectangle(190., 24.),
+            Collider::rectangle(190., 22.),
             GravityScale(0.0),
+            StateScoped(GameState::Playing),
         ));
     }
 }

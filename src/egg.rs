@@ -1,14 +1,16 @@
 use bevy::prelude::*;
 use avian2d::prelude::*;
 
+use crate::GameState;
+
 pub struct EggPlugin;
 
 impl Plugin for EggPlugin {
     fn build(&self, app: &mut App) {
         app
-            .init_resource::<CursorPosition>()
-            .add_systems(Startup, spawn_egg)
-            .add_systems(Update, (jump, draw_path));
+            .add_systems(OnEnter(GameState::Playing), spawn_egg)
+            .add_systems(Update, (jump, draw_path, trigger_game_over)
+                .run_if(in_state(GameState::Playing)));
     }
 }
 
@@ -19,6 +21,8 @@ fn spawn_egg(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
+    commands.init_resource::<CursorPosition>();
+
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("textures/egg.png"),
@@ -31,6 +35,7 @@ fn spawn_egg(
         LockedAxes::ROTATION_LOCKED,
         Friction::new(1.0),
         Restitution::new(0.0),
+        StateScoped(GameState::Playing),
     ));
 }
 
@@ -118,5 +123,16 @@ fn draw_path(
         for (_, _, entity) in q_path_point.iter() {
             commands.entity(entity).despawn();
         }
+    }
+}
+
+fn trigger_game_over(
+    q_egg: Query<&Transform, With<Egg>>,
+    mut next_state: ResMut<NextState<GameState>>,
+) {
+    let Ok(egg_transform) = q_egg.get_single() else { return };
+
+    if egg_transform.translation.y <= -325.0 {
+        next_state.set(GameState::GameOver);
     }
 }

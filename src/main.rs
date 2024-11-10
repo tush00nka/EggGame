@@ -10,6 +10,17 @@ use platform::PlatformPlugin;
 mod egg;
 use egg::EggPlugin;
 
+mod game_over_screen;
+use game_over_screen::GameOverScreenPlugin;
+
+#[derive(States, Debug, Hash, Eq, PartialEq, Clone, Copy, Default)]
+pub enum GameState {
+    Menu,
+    #[default]
+    Playing,
+    GameOver,
+}
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins
@@ -28,10 +39,14 @@ fn main() {
         .add_plugins(PhysicsPlugins::new(FixedUpdate))
         .insert_resource(Gravity(Vec2::NEG_Y * 1_000.))
 
+        .init_state::<GameState>()
+        .enable_state_scoped_entities::<GameState>()
+
         .add_plugins((
             CameraPlugin,
             PlatformPlugin,
             EggPlugin,
+            GameOverScreenPlugin,
         ))
 
         .run();
