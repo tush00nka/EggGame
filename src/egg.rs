@@ -73,8 +73,8 @@ fn jump(
 
     // --- Touch Controls ---
     if let Some(touch) = touches.get_pressed(0) {
-        cursor_position.start = touch.start_position();
-        cursor_position.current = touch.position();
+        cursor_position.start = touch.start_position().with_y(-touch.start_position().y);
+        cursor_position.current = touch.position().with_y(-touch.position().y);
     } 
 
     // --- Mouse Controls ---
