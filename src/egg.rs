@@ -51,6 +51,12 @@ struct CursorPosition {
     current: Vec2,
 }
 
+impl CursorPosition {
+    fn reset(&mut self) {
+        *self = CursorPosition::default()
+    }
+}
+
 fn jump(
     mut q_egg: Query<&mut ExternalImpulse, With<Egg>>,
 
@@ -95,6 +101,8 @@ fn jump(
     || touches.get_released(0).is_some() {
         let difference = cursor_position.start - cursor_position.current;
         impulse.apply_impulse(difference * 2_000.).with_persistence(false);
+
+        cursor_position.reset();
     }
 }
 
