@@ -46,8 +46,10 @@ fn spawn_screen(
 fn restart(
     mut next_state: ResMut<NextState<GameState>>,
     mouse: Res<ButtonInput<MouseButton>>,
+    touches: Res<Touches>,
 ) {
-    if mouse.just_released(MouseButton::Left) {
+    if mouse.just_released(MouseButton::Left)
+    || touches.any_just_released() {
         next_state.set(GameState::Playing);
     }
 }
