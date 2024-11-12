@@ -1,4 +1,4 @@
-use bevy::{prelude::*, window::WindowResolution};
+use bevy::{asset::AssetMetaCheck, prelude::*, window::WindowResolution};
 use avian2d::prelude::*;
 
 mod camera;
@@ -27,6 +27,10 @@ pub enum GameState {
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins
+            .set(AssetPlugin {
+                meta_check: AssetMetaCheck::Never,
+                ..default()
+            })
             .set(WindowPlugin {
                     primary_window: Some(Window {
                         title: "Egg Game))".to_string(),

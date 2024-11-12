@@ -9,7 +9,7 @@ impl Plugin for EggPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_systems(OnEnter(GameState::Playing), spawn_egg)
-            .add_systems(Update, (jump, draw_path, trigger_game_over)
+            .add_systems(Update, ((jump, draw_path).run_if(is_landed), trigger_game_over)
                 .run_if(in_state(GameState::Playing)));
     }
 }
@@ -37,6 +37,12 @@ fn spawn_egg(
         Restitution::new(0.0),
         StateScoped(GameState::Playing),
     ));
+}
+
+fn is_landed(q_egg: Query<&CollidingEntities, With<Egg>>) -> bool {
+    let Ok(colliding_entities) = q_egg.get_single() else { return false };
+
+    !colliding_entities.is_empty()
 }
 
 #[derive(Resource, Default)]
