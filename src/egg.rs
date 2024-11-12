@@ -56,14 +56,22 @@ fn jump(
 
     q_windows: Query<&Window>,
     q_camera: Query<(&Camera, &GlobalTransform)>,
-    mut cursor_position: ResMut<CursorPosition>,
 
+    mut cursor_position: ResMut<CursorPosition>,
     mouse: Res<ButtonInput<MouseButton>>,
+    touches: Res<Touches>,
 ) {
     let Ok(window) = q_windows.get_single() else { return };
     let Ok((camera, camera_transform)) = q_camera.get_single() else { return };
     let Ok(mut impulse) = q_egg.get_single_mut() else { return };
 
+    // --- Touch Controls ---
+    if let Some(touch) = touches.get_pressed(0) {
+        cursor_position.start = touch.start_position();
+        cursor_position.current = touch.position();
+    } 
+
+    // --- Mouse Controls ---
     if mouse.just_pressed(MouseButton::Left) {
         let Some(world_position) = window
             .cursor_position()
@@ -82,9 +90,10 @@ fn jump(
         cursor_position.current = world_position;
     }
 
-    if mouse.just_released(MouseButton::Left) {
+    // --- Equal behaviour for both ---
+    if mouse.just_released(MouseButton::Left)
+    || touches.get_released(0).is_some() {
         let difference = cursor_position.start - cursor_position.current;
-
         impulse.apply_impulse(difference * 2_000.).with_persistence(false);
     }
 }
@@ -101,10 +110,12 @@ fn draw_path(
 
     cursor_position: Res<CursorPosition>,
     mouse: Res<ButtonInput<MouseButton>>,
+    touches: Res<Touches>,
 ) {
     let Ok(egg_entity) = q_egg.get_single() else { return };
 
-    if mouse.just_pressed(MouseButton::Left) {
+    if mouse.just_pressed(MouseButton::Left)
+    || touches.any_just_pressed() {
         for i in 1..=10 {
             commands.entity(egg_entity).with_children(|parent| {
                 parent.spawn((
@@ -119,13 +130,15 @@ fn draw_path(
         }
     }
 
-    if mouse.pressed(MouseButton::Left) {
+    if mouse.pressed(MouseButton::Left)
+    || touches.get_pressed(0).is_some() {
         for (mut point_transform, path_point, _) in q_path_point.iter_mut() {
             point_transform.translation = ((cursor_position.start - cursor_position.current) * (path_point.0 as f32/10.0)).extend(0.0);
         } 
     }
 
-    if mouse.just_released(MouseButton::Left) {
+    if mouse.just_released(MouseButton::Left)
+    || touches.any_just_released() {
         for (_, _, entity) in q_path_point.iter() {
             commands.entity(entity).despawn();
         }
